@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #######
 # actinia-core - an open source REST API for scalable, distributed, high
 # performance processing of geographical data that uses GRASS GIS for
@@ -21,20 +20,16 @@
 #
 #######
 
-"""
-Entpoint configuration
-"""
+"""Entpoint configuration."""
 
 import csv
-from flask import jsonify
-from flask import make_response
-from functools import wraps
 import os
 import sys
+from functools import wraps
 
 from actinia_core.core.common.config import global_config
 from actinia_core.models.response_models import SimpleResponseModel
-
+from flask import jsonify, make_response
 
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"
@@ -43,9 +38,9 @@ __maintainer__ = "mundialis GmbH & Co. KG"
 
 
 if global_config.ENDPOINTS_CONFIG is not None and os.path.isfile(
-    global_config.ENDPOINTS_CONFIG
+    global_config.ENDPOINTS_CONFIG,
 ):
-    with open(global_config.ENDPOINTS_CONFIG, mode="r") as inp:
+    with open(global_config.ENDPOINTS_CONFIG, encoding="utf-8") as inp:
         reader = csv.reader(inp, delimiter=";")
         endpoints_dict = {
             row[0]: [method.upper() for method in row[1].split(",")]
@@ -65,8 +60,7 @@ def check_endpoint(method, api_doc=None, endpoint_class=None):
         and method_upper in endpoints_dict[endpoint_class]
     ):
         return api_doc if api_doc is not None else True
-    else:
-        return False
+    return False
 
 
 def endpoint_decorator():
@@ -80,19 +74,17 @@ def endpoint_decorator():
         @wraps(func)
         def wrapper(*args, **kwargs):
             if check_endpoint(method, endpoint_class=endpoint_class):
-                result = func(*args, **kwargs)
-                return result
-            else:
-                return make_response(
-                    jsonify(
-                        SimpleResponseModel(
-                            status="error",
-                            message="Not Found. The requested URL is not "
-                            "configured on the server.",
-                        )
+                return func(*args, **kwargs)
+            return make_response(
+                jsonify(
+                    SimpleResponseModel(
+                        status="error",
+                        message="Not Found. The requested URL is not "
+                        "configured on the server.",
                     ),
-                    404,
-                )
+                ),
+                404,
+            )
 
         return wrapper
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #######
 # actinia-core - an open source REST API for scalable, distributed, high
 # performance processing of geographical data that uses GRASS GIS for
@@ -21,38 +20,36 @@
 #
 #######
 
-"""
-Base class for asynchronous and synchronous responses
-"""
+"""Base class for asynchronous and synchronous responses."""
 import os
 import pickle
 import time
 import uuid
 from datetime import datetime
-from flask import make_response, jsonify
-from flask import request, g
-from flask.json import loads as json_loads
-from flask_restful_swagger_2 import Resource
+
+from actinia_core.core.common.api_logger import log_api_call
+from actinia_core.core.common.app import auth, flask_api
+from actinia_core.core.common.config import global_config
+from actinia_core.core.messages_logger import MessageLogger
+from actinia_core.core.resource_data_container import ResourceDataContainer
+from actinia_core.core.resources_logger import ResourceLogger
+from actinia_core.models.response_models import (
+    ApiInfoModel,
+    ProcessingResponseModel,
+    create_response_from_model,
+)
 from actinia_core.rest.base.deprecated_locations import (
     location_deprecated_decorator,
 )
-from actinia_core.rest.base.user_auth import check_user_permissions
-from actinia_core.rest.base.user_auth import create_dummy_user
-from actinia_core.core.common.app import auth
-from actinia_core.core.common.app import flask_api
-from actinia_core.core.common.config import global_config
-from actinia_core.core.common.api_logger import log_api_call
-from actinia_core.core.messages_logger import MessageLogger
-from actinia_core.core.resources_logger import ResourceLogger
-from actinia_core.core.resource_data_container import ResourceDataContainer
-from actinia_core.models.response_models import ProcessingResponseModel
-from actinia_core.models.response_models import (
-    create_response_from_model,
-    ApiInfoModel,
+from actinia_core.rest.base.user_auth import (
+    check_user_permissions,
+    create_dummy_user,
 )
-from actinia_core.rest.resource_streamer import RequestStreamerResource
 from actinia_core.rest.resource_management import ResourceManager
-
+from actinia_core.rest.resource_streamer import RequestStreamerResource
+from flask import g, jsonify, make_response, request
+from flask.json import loads as json_loads
+from flask_restful_swagger_2 import Resource
 
 __license__ = "GPLv3"
 __author__ = "Sören Gebbert, Anika Weinmann"
@@ -64,8 +61,7 @@ __email__ = "info@mundialis.de"
 
 
 class ResourceBase(Resource):
-    """
-    This is the base class for all asynchronous and synchronous processing
+    """This is the base class for all asynchronous and synchronous processing
     resources.
     """
 
@@ -90,7 +86,12 @@ class ResourceBase(Resource):
     else:
         decorators.append(create_dummy_user)
 
-    def __init__(self, resource_id=None, iteration=None, post_url=None):
+    def __init__(
+        self,
+        resource_id=None,
+        iteration=None,
+        post_url=None,
+    ) -> None:
         # Configuration
         Resource.__init__(self)
 
@@ -124,7 +125,8 @@ class ResourceBase(Resource):
         self.grass_start_script = global_config.GRASS_GIS_START_SCRIPT
         self.grass_addon_path = global_config.GRASS_ADDON_PATH
         self.download_cache = os.path.join(
-            global_config.DOWNLOAD_CACHE, self.user_id
+            global_config.DOWNLOAD_CACHE,
+            self.user_id,
         )
 
         # Set the resource id
@@ -136,17 +138,16 @@ class ResourceBase(Resource):
             self.request_id = self.generate_request_id_from_resource_id()
 
         if global_config.QUEUE_TYPE == "per_job":
-            self.queue = "%s_%s" % (
-                global_config.WORKER_QUEUE_PREFIX,
-                self.resource_id,
+            self.queue = (
+                f"{global_config.WORKER_QUEUE_PREFIX}_{self.resource_id}"
             )
         elif global_config.QUEUE_TYPE == "per_user":
-            self.queue = "%s_%s" % (
-                global_config.WORKER_QUEUE_PREFIX,
-                self.user_id,
-            )
+            self.queue = f"{global_config.WORKER_QUEUE_PREFIX}_{self.user_id}"
         elif global_config.QUEUE_TYPE == "kvdb":
-            self.queue = "%s_%s" % (global_config.WORKER_QUEUE_PREFIX, "count")
+            self.queue = "{}_{}".format(
+                global_config.WORKER_QUEUE_PREFIX,
+                "count",
+            )
         else:
             self.queue = "local"
 
@@ -194,9 +195,14 @@ class ResourceBase(Resource):
             kwargs["post_url"] = self.post_url
         self.api_info = ApiInfoModel(**kwargs)
 
-    def create_error_response(self, message, status="error", http_code=400):
+    def create_error_response(
+        self,
+        message,
+        status="error",
+        http_code=400,
+    ) -> None:
         """Create an error response, that by default sets the status to error
-        and the http_code to 400
+        and the http_code to 400.
 
         This method sets the self.response_data variable.
 
@@ -239,7 +245,9 @@ class ResourceBase(Resource):
 
         """
         self.create_error_response(
-            message=message, status=status, http_code=http_code
+            message=message,
+            status=status,
+            http_code=http_code,
         )
         self.resource_logger.commit(
             user_id=self.user_id,
@@ -250,8 +258,8 @@ class ResourceBase(Resource):
         http_code, response_model = pickle.loads(self.response_data)
         return make_response(jsonify(response_model), http_code)
 
-    def check_for_json(self):
-        """Check if the Payload is a JSON document
+    def check_for_json(self) -> bool:
+        """Check if the Payload is a JSON document.
 
         Return: bool:
             True in case of success, False otherwise
@@ -262,7 +270,7 @@ class ResourceBase(Resource):
                 self.request_data = json_loads(request.data)
             except Exception as e:
                 self.create_error_response(
-                    message="No JSON data in request: Exception: %s" % str(e)
+                    message=f"No JSON data in request: Exception: {e!s}",
                 )
                 return False
 
@@ -274,13 +282,12 @@ class ResourceBase(Resource):
 
         return True
 
-    def check_for_xml(self):
-        """Check if the Payload is a XML document
+    def check_for_xml(self) -> bool:
+        """Check if the Payload is a XML document.
 
         Return: bool:
             True in case of success, False otherwise
         """
-
         if "Content-Type" not in request.headers:
             self.create_error_response(message="XML content type is required.")
             return False
@@ -292,18 +299,17 @@ class ResourceBase(Resource):
         # Check if payload was provided
         if hasattr(request, "data") is False:
             self.create_error_response(
-                message="No XML data section in HTTP header."
+                message="No XML data section in HTTP header.",
             )
             return False
 
         if request.data:
             self.request_data = request.data
             return True
-        else:
-            self.create_error_response(
-                message="Empty XML data section in HTTP header."
-            )
-            return False
+        self.create_error_response(
+            message="Empty XML data section in HTTP header.",
+        )
+        return False
 
     def preprocess(
         self,
@@ -314,7 +320,7 @@ class ResourceBase(Resource):
         map_name=None,
         process_chain_list=None,
     ):
-        """Preprocessing steps for asynchronous processing
+        """Preprocessing steps for asynchronous processing.
 
             - Check if the request has a data field
             - Check if the module chain description can be loaded
@@ -345,9 +351,8 @@ class ResourceBase(Resource):
         if has_json is True and has_xml is True:
             if request.is_json is True:
                 self.request_data = request.get_json()
-            else:
-                if self.check_for_xml() is False:
-                    return None
+            elif self.check_for_xml() is False:
+                return None
         elif has_xml is True:
             if self.check_for_xml() is False:
                 return None
@@ -382,7 +387,8 @@ class ResourceBase(Resource):
             and "http://" in self.resource_url_base
         ):
             self.resource_url_base = self.resource_url_base.replace(
-                "http://", "https://"
+                "http://",
+                "https://",
             )
 
         # Create the accepted response that will be always send
@@ -405,7 +411,10 @@ class ResourceBase(Resource):
 
         # Send the status to the database
         self.resource_logger.commit(
-            self.user_id, self.resource_id, self.iteration, self.response_data
+            self.user_id,
+            self.resource_id,
+            self.iteration,
+            self.response_data,
         )
 
         # Return the ResourceDataContainer that includes all
@@ -432,11 +441,12 @@ class ResourceBase(Resource):
         )
 
     def generate_uuids(self):
-        """Return a unique request and resource id based on uuid4
+        """Return a unique request and resource id based on uuid4.
 
         Returns:
             (str, str):
             request_id, resource_id as strings
+
         """
         new_uuid = uuid.uuid4()
         request_id = "request_id-" + str(new_uuid)
@@ -448,7 +458,7 @@ class ResourceBase(Resource):
         return self.resource_id.replace("resource_id-", "request_id-")
 
     def wait_until_finish(self, poll_time=0.2):
-        """Wait until a resource finished, terminated or failed with an error
+        """Wait until a resource finished, terminated or failed with an error.
 
         Call this method if a job was enqueued and the POST/GET/DELETE/PUT
         method should wait for it
@@ -460,11 +470,14 @@ class ResourceBase(Resource):
         Returns:
             (int, dict)
             The http_code and the generated data dictionary
+
         """
         # Wait for the async process by asking the kvdb database for updates
         while True:
             response_data = self.resource_logger.get(
-                self.user_id, self.resource_id, self.iteration
+                self.user_id,
+                self.resource_id,
+                self.iteration,
             )
             if not response_data:
                 message = (
