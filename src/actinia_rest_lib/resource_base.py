@@ -38,7 +38,7 @@ from actinia_core.models.response_models import (
     ProcessingResponseModel,
     create_response_from_model,
 )
-from actinia_core.rest.base.deprecated_locations import (
+from actinia_rest_lib.deprecated_locations import (
     location_deprecated_decorator,
 )
 from actinia_core.rest.base.user_auth import (
