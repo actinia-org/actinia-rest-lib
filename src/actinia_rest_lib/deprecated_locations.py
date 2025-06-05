@@ -26,12 +26,11 @@ Deprecated location decorator
 """
 
 
-from flask import jsonify, make_response, request
 from functools import wraps
 
 from actinia_core.models.response_models import SimpleResponseModel
 from actinia_core.version import G_VERSION
-
+from flask import jsonify, make_response, request
 
 __license__ = "GPLv3"
 __author__ = "Anika Weinmann"

@@ -23,7 +23,6 @@ lint.ignore = ["PLR0913", "PLR0917", "PLW0603", "S107", "S606", "FA102"]
     "D400",
     "D413",
     "D415",
-    "I001",
     "UP009",
 ]
 "src/actinia_rest_lib/endpoint_config.py" = [
