@@ -38,9 +38,6 @@ from actinia_core.models.response_models import (
     ProcessingResponseModel,
     create_response_from_model,
 )
-from actinia_rest_lib.deprecated_locations import (
-    location_deprecated_decorator,
-)
 from actinia_core.rest.base.user_auth import (
     check_user_permissions,
     create_dummy_user,
@@ -50,6 +47,10 @@ from actinia_core.rest.resource_streamer import RequestStreamerResource
 from flask import g, jsonify, make_response, request
 from flask.json import loads as json_loads
 from flask_restful_swagger_2 import Resource
+
+from actinia_rest_lib.deprecated_locations import (
+    location_deprecated_decorator,
+)
 
 __license__ = "GPLv3"
 __author__ = "Sören Gebbert, Anika Weinmann"

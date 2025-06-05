@@ -10,7 +10,36 @@
 lint.ignore = ["PLR0913", "PLR0917", "PLW0603", "S107", "S606", "FA102"]
 
 [lint.per-file-ignores]
-"src/actinia_rest_lib/rest/base/resource_base.py" = [
+"src/actinia_rest_lib/deprecated_locations.py" = [
+    "ANN001",
+    "ANN002",
+    "ANN003",
+    "ANN201",
+    "ANN202",
+    "COM812",
+    "D200",
+    "D205",
+    "D212",
+    "D400",
+    "D413",
+    "D415",
+    "I001",
+    "UP009",
+]
+"src/actinia_rest_lib/endpoint_config.py" = [
+    "ANN001",
+    "ANN002",
+    "ANN003",
+    "ANN201",
+    "ANN202",
+    "D103",
+    "D205",
+    "PLR2004",
+    "PTH113",
+    "PTH123",
+    "SLF001",
+]
+"src/actinia_rest_lib/resource_base.py" = [
     "ANN001",
     "ANN201",
     "BLE001",
@@ -28,18 +57,5 @@ lint.ignore = ["PLR0913", "PLR0917", "PLW0603", "S107", "S606", "FA102"]
     "S301",
     "S403",
     "UP031",
-]
-"src/actinia_rest_lib/rest/base/endpoint_config.py" = [
-    "ANN001",
-    "ANN002",
-    "ANN003",
-    "ANN201",
-    "ANN202",
-    "D103",
-    "D205",
-    "PLR2004",
-    "PTH113",
-    "PTH123",
-    "SLF001",
 ]
 "tests/*" = ["PLR2004",]
