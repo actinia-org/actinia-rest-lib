@@ -42,22 +42,23 @@ if global_config.ENDPOINTS_CONFIG is not None and os.path.isfile(
 ):
     with open(global_config.ENDPOINTS_CONFIG, encoding="utf-8") as inp:
         reader = csv.reader(inp, delimiter=";")
-        endpoints_dict = {
+        ENDPOINTS_DICT = {
             row[0]: [method.upper() for method in row[1].split(",")]
             for row in reader
             if len(row) == 2
         }
 else:
-    endpoints_dict = None
+    ENDPOINTS_DICT = None
 
 
 def check_endpoint(method, api_doc=None, endpoint_class=None):
+    """Check whether an endpoint is allowed to be used."""
     if endpoint_class is None:
         endpoint_class = sys._getframe().f_back.f_code.co_name
     method_upper = method.upper()
-    if endpoints_dict is None or (
-        endpoint_class in endpoints_dict
-        and method_upper in endpoints_dict[endpoint_class]
+    if ENDPOINTS_DICT is None or (
+        endpoint_class in ENDPOINTS_DICT
+        and method_upper in ENDPOINTS_DICT[endpoint_class]
     ):
         return api_doc if api_doc is not None else True
     return False

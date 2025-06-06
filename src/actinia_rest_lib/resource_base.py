@@ -145,10 +145,7 @@ class ResourceBase(Resource):
         elif global_config.QUEUE_TYPE == "per_user":
             self.queue = f"{global_config.WORKER_QUEUE_PREFIX}_{self.user_id}"
         elif global_config.QUEUE_TYPE == "kvdb":
-            self.queue = "{}_{}".format(
-                global_config.WORKER_QUEUE_PREFIX,
-                "count",
-            )
+            self.queue = f"{global_config.WORKER_QUEUE_PREFIX}_{"count"}"
         else:
             self.queue = "local"
 
@@ -456,6 +453,7 @@ class ResourceBase(Resource):
         return request_id, resource_id
 
     def generate_request_id_from_resource_id(self):
+        """Generate a request id from the resource id."""
         return self.resource_id.replace("resource_id-", "request_id-")
 
     def wait_until_finish(self, poll_time=0.2):
@@ -483,8 +481,8 @@ class ResourceBase(Resource):
             if not response_data:
                 message = (
                     "Unable to receive process status. User id "
-                    "%s resource id %s and iteration %d"
-                    % (self.user_id, self.resource_id, self.iteration)
+                    f"{self.user_id} resource id {self.resource_id} "
+                    f"and iteration {self.iteration}"
                 )
                 return make_response(message, 400)
 

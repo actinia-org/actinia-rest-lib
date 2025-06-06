@@ -23,22 +23,24 @@ __copyright__ = "Copyright 2025 mundialis GmbH & Co. KG"
 __maintainer__ = "mundialis GmbH & Co. KG"
 
 import pytest
-from flask import make_response
+from flask import Response, make_response
 
 from actinia_rest_lib.resource_base import ResourceBase
 
+
 @pytest.mark.unittest
-def test_resource_base():
+def test_resource_base() -> None:
     """Test for tranform_input function."""
 
     class TestResource(ResourceBase):
-        """Get something for test"""
+        """Get something for test."""
 
-        def get(self):
+        @classmethod
+        def get(cls) -> Response:
             """Get something."""
             return make_response("something", 200)
 
-    assert (
-        'location_deprecated_decorator' in
-        [i.__name__ for i in TestResource.decorators]
-    ), "Decorator 'location_deprecated_decorator' not found in TestResource.decorators"
+    assert "location_deprecated_decorator" in [
+        i.__name__ for i in TestResource.decorators
+    ], "Decorator 'location_deprecated_decorator' not found in "
+    "TestResource.decorators"
