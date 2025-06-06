@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Copyright (c) 2018-2024 mundialis GmbH & Co. KG.
+"""Copyright (c) 2018-2025 mundialis GmbH & Co. KG.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,21 +18,27 @@ First test
 """
 
 __license__ = "GPLv3"
-__author__ = "Anika Weinmann"
-__copyright__ = "Copyright 2022 mundialis GmbH & Co. KG"
+__author__ = "Carmen Tawalika"
+__copyright__ = "Copyright 2025 mundialis GmbH & Co. KG"
 __maintainer__ = "mundialis GmbH & Co. KG"
 
 import pytest
+from flask import make_response
 
-from actinia_rest_lib.core.example import transform_input
-
+from actinia_rest_lib.resource_base import ResourceBase
 
 @pytest.mark.unittest
-@pytest.mark.parametrize(
-    ("inp", "ref_out"),
-    [("test", "Hello world TEST!"), ("bla23", "Hello world BLA23!")],
-)
-def test_transform_input(inp: str, ref_out: str) -> None:
+def test_resource_base():
     """Test for tranform_input function."""
-    out = transform_input(inp)
-    assert out == ref_out, f"Wrong result from transform_input for {inp}"
+
+    class TestResource(ResourceBase):
+        """Get something for test"""
+
+        def get(self):
+            """Get something."""
+            return make_response("something", 200)
+
+    assert (
+        'location_deprecated_decorator' in
+        [i.__name__ for i in TestResource.decorators]
+    ), "Decorator 'location_deprecated_decorator' not found in TestResource.decorators"
