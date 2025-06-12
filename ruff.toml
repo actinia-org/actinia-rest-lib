@@ -10,6 +10,51 @@
 lint.ignore = ["PLR0913", "PLR0917", "PLW0603", "S107", "S606", "FA102"]
 
 [lint.per-file-ignores]
-"tests/testsuite.py" = [ "PLC0415",]
-"tests/integrationtests/test_helloworld.py" = [ "PLR2004",]
-"tests/integrationtests/test_projecthelloworld.py" = [ "PLR2004",]
+"src/actinia_rest_lib/deprecated_locations.py" = [
+    "ANN001",
+    "ANN002",
+    "ANN003",
+    "ANN201",
+    "ANN202",
+    "COM812",
+    "D200",
+    "D205",
+    "D212",
+    "D400",
+    "D413",
+    "D415",
+    "UP009",
+]
+"src/actinia_rest_lib/endpoint_config.py" = [
+    "ANN001",
+    "ANN002",
+    "ANN003",
+    "ANN201",
+    "ANN202",
+    "D103",
+    "D205",
+    "PLR2004",
+    "PTH113",
+    "PTH123",
+    "SLF001",
+]
+"src/actinia_rest_lib/resource_base.py" = [
+    "ANN001",
+    "ANN201",
+    "BLE001",
+    "D102",
+    "D107",
+    "D205",
+    "D404",
+    "DTZ005",
+    "E501",
+    "FBT002",
+    "PLR0915",
+    "PLR6301",
+    "PTH118",
+    "RUF012",
+    "S301",
+    "S403",
+    "UP031",
+]
+"tests/*" = ["PLR2004",]

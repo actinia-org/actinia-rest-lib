@@ -5,11 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "actinia-rest-lib"
 version = "1.0.0"
-description = "An actinia-core plugin which adds example endpoints to actinia-core"
+description = "An actinia library for common REST functionality"
 readme = "README.md"
 authors = [
     { name = "Carmen Tawalika"},
     { name = "Anika Weinmann"},
+    { name = "Lina Krisztian"},
 ]
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
@@ -27,8 +28,9 @@ keywords = [
     "example",
 ]
 dependencies = [
-    "colorlog>=4.2.1",
-    "xmltodict",
+    "flask",
+    "flask_restful_swagger_2",
+    "actinia-core",
 ]
 
 [project.optional-dependencies]
