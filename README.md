@@ -4,12 +4,12 @@ This is the rest library for [actinia-core](https://github.com/mundialis/actinia
 
 It is a requirement of actinia-core and some actinia plugins and not meant to be used standalone.
 
-
 ## DEV setup
-For a DEV setup integrated with other actinia components, see [here](https://github.com/actinia-org/actinia-docker#local-dev-setup-for-actinia-core-plugins-with-vscode).
 
+For a DEV setup integrated with other actinia components, see [local development setup](https://github.com/actinia-org/actinia-docker#local-dev-setup-for-actinia-core-plugins-with-vscode).
 
 ### Running tests
+
 You can run the tests in the actinia test docker:
 
 ```bash
