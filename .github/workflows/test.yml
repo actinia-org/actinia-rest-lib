@@ -23,7 +23,7 @@ jobs:
         sed -i "s+# RUN make test+RUN make unittest+g" docker/actinia-rest-lib-test/Dockerfile
     - name: Unittests of actinia-rest-lib
       id: docker_build
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         push: false
         tags: actinia-rest-lib-tests:alpine
@@ -70,7 +70,7 @@ jobs:
         sed -i "s+# RUN make test+RUN make unittest+g" docker/actinia-rest-lib-test/Dockerfile
     - name: Unittests of actinia-rest-lib
       id: docker_build
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         push: false
         tags: actinia-rest-lib-tests:alpine
