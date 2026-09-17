@@ -6,6 +6,8 @@ on:
     types:
       - completed
 
+permissions: {}
+
 jobs:
   post-pr-reviews:
     uses: mundialis/github-workflows/.github/workflows/post-pr-reviews.yml@main
