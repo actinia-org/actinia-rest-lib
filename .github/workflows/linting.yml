@@ -11,3 +11,8 @@ on:
 jobs:
   lint:
     uses: mundialis/github-workflows/.github/workflows/linting.yml@main
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write

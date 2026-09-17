@@ -5,6 +5,8 @@ on:
   release:
     types: [published]
 
+permissions: {}
+
 jobs:
 
   # publish-python-test-pypi:
