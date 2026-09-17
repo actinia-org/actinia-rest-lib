@@ -25,7 +25,6 @@
 Deprecated location decorator
 """
 
-
 from functools import wraps
 
 from actinia_core.models.response_models import SimpleResponseModel

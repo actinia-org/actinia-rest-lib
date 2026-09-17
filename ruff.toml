@@ -10,6 +10,9 @@
 lint.ignore = ["PLR0913", "PLR0917", "PLW0603", "S107", "S606", "FA102"]
 
 [lint.per-file-ignores]
+"src/actinia_rest_lib/__init__.py" = [
+    "RUF067",
+]
 "src/actinia_rest_lib/deprecated_locations.py" = [
     "ANN001",
     "ANN002",
